@@ -1,0 +1,11 @@
+--- #YAML:1.0
+name: File::Stream
+version: 1.00
+abstract: Regular expression delimited records from streams
+license: perl
+distribution_type: module
+requires:
+  Test::More: 0.44
+  Carp: 0
+  FileHandle: 0
+dynamic_config: 0

@@ -1,0 +1,41 @@
+File::Stream version 1.00
+=========================
+
+Perl filehandles are streams, but sometimes they just aren't powerful enough.
+This module offers to have streams from filehandles searched with regexes
+and allows the global input record separator variable to contain regexes.
+
+Thus, readline() and the <> operator can now return records delimited
+by regular expression matches.
+
+Please see the POD documentation in the module file for important CAVEATS.
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+DEPENDENCIES
+
+This module requires these other modules and libraries:
+
+  Carp
+  FileHandle
+
+CONTRIBUTIONS
+
+Many thanks go to Simon Cozens for the original idea and much valuable
+input. It was great fun talking about some of the weirder features of Perl.
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2003 Steffen Müller
+Author can be reached at stream-module at steffen-mueller dot net.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself. 
+
