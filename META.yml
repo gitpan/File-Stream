@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name: File::Stream
-version: 1.00
+version: 1.11
 abstract: Regular expression delimited records from streams
 license: perl
 distribution_type: module

@@ -1,4 +1,4 @@
-File::Stream version 1.10
+File::Stream version 1.11
 =========================
 
 Perl filehandles are streams, but sometimes they just aren't powerful enough.
@@ -25,6 +25,7 @@ This module requires these other modules and libraries:
 
   Carp
   FileHandle
+  YAPE::Regex
 
 CONTRIBUTIONS
 
@@ -36,7 +37,7 @@ construct.
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2003 Steffen Müller
+Copyright (C) 2003-2004 Steffen Müller
 Author can be reached at stream-module at steffen-mueller dot net.
 
 This library is free software; you can redistribute it and/or modify

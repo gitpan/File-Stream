@@ -62,7 +62,7 @@ use Carp;
 use YAPE::Regex;
 
 use vars qw/$End_Of_String/;
-our $VERSION = '1.10';
+our $VERSION = '1.11';
 
 =head2 new
 
@@ -160,7 +160,13 @@ sub find {
 	my $str = '';
 	my $token;
 	while ($token = $yp->next()) {
-		$str .= $token->string() .
+		my $tstr = $token->string();
+		if ($tstr eq '^' or $tstr eq '$') {
+			croak "Invalid use of anchors (here: '$tstr') in a ",
+				"regular expression that will be\n",
+				"applied to a stream";
+		}
+		$str .= $tstr .
 		        '(?:\z(?{$End_Of_String++})(?!)|)';
 	}
 	qr/$str/;
@@ -326,8 +332,11 @@ Perl's regular expression engine requires that the string you apply a regular
 expression to be in memory completely. That means applying a regular
 expression that matches infinitely long strings (like .*) to a stream will
 lead to the module reading in the whole file, or worse yet, an infinite
-string. Anchors like I<^> or I<$> don't make sense with streams either.
-B<So don't do that!>
+string. Anchors like I<^> or I<$> don't make sense with streams either, but
+since version 1.11 of File::Stream, the module throws a fatal error when
+finding an anchor in a regular expression.
+Using infinitely long matches on infinite streams may still result
+in your machine running out of memory. B<So don't do that!>
 
 Since version 1.10, the buffer is extended whenever the regex reaches its end.
 That means it has to tokenize the regex and insert weird constructs in many
@@ -343,6 +352,8 @@ and Ben Tilly for suggesting the use of the ${} regex construct.
 
 =head1 SEE ALSO
 
-L<perltie>, L<Tie::Handle>, L<perlre>
+L<perltie>, L<Tie::Handle>, L<perlre>, L<YAPE::Regex>
+
+L<Perl6::Slurp>
 
 =cut

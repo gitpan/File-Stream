@@ -1,5 +1,8 @@
 Revision history for Perl extension File::Stream.
 
+1.11  Tue Mar  2 13:46:44 2003
+	- Added test for anchors in regex delimiter. croaks on detection.
+
 1.10  Sun Oct 12 14:17:56 2003
 	- Added funky regex heuristics. :)
 
