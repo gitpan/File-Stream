@@ -1,5 +1,8 @@
 Revision history for Perl extension File::Stream.
 
+1.10  Sun Oct 12 14:17:56 2003
+	- Added funky regex heuristics. :)
+
 1.00  Sat Oct  4 14:36:13 2003
 	- original version as uploaded to CPAN
 

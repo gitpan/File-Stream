@@ -1,3 +1,4 @@
+
 =head1 NAME
 
 File::Stream - Regular expression delimited records from streams
@@ -58,8 +59,10 @@ use warnings;
 
 use FileHandle;
 use Carp;
+use YAPE::Regex;
 
-our $VERSION = '1.00';
+use vars qw/$End_Of_String/;
+our $VERSION = '1.10';
 
 =head2 new
 
@@ -100,7 +103,7 @@ sub new {
 
     my $filehandle = new FileHandle;
     my $handler = tie *$filehandle => $class, @_;
-    return ($handler, $filehandle);
+    return ( $handler, $filehandle );
 }
 
 =head2 readline
@@ -119,7 +122,7 @@ sub readline {
     my $separator = $self->{separator};
     $separator = $/ if not defined $separator;
     my ( $pre_match, $match ) = $self->find($separator);
-    if (not defined $pre_match) {
+    if ( not defined $pre_match ) {
         my $buf = $self->{buffer};
         $self->{buffer} = '';
         return undef if $buf eq '';
@@ -127,7 +130,6 @@ sub readline {
     }
     return $pre_match . $match;
 }
-
 
 =head2 find
 
@@ -150,7 +152,19 @@ As with readline(), this is a method on the stream handler object.
 sub find {
     my $self         = shift;
     my @terms        = @_;
+    use re 'eval';
+    $End_Of_String = 0;
     my @regex_tokens =
+      map {
+	my $yp = YAPE::Regex->new($_);
+	my $str = '';
+	my $token;
+	while ($token = $yp->next()) {
+		$str .= $token->string() .
+		        '(?:\z(?{$End_Of_String++})(?!)|)';
+	}
+	qr/$str/;
+      }
       map {
         if ( not ref($_) )
         {
@@ -164,14 +178,17 @@ sub find {
             qr/\Q$string\E/;
         }
       } @terms;
-    my $re = '(' . join( ')|(', @regex_tokens ) . ')';
+    
+    my $re       = '(' . join( ')|(', @regex_tokens ) . ')';
     my $compiled = qr/$re/s;
+
     while (1) {
         my @matches = $self->{buffer} =~ $compiled;
-        if ( not @matches ) {
-            return undef unless $self->fill_buffer();
-            next;
-        }
+	if ($End_Of_String or not @matches) {
+		$End_Of_String = 0;
+		return undef unless $self->fill_buffer();
+		next;
+	}
         else {
             my $index = undef;
             for ( 0 .. $#matches ) {
@@ -263,6 +280,7 @@ sub READ {
                 substr( $self->{buffer}, 0, $length_avail, '' ) );
             return $length_avail;
         }
+
         # only reached if buffer long enough.
     }
     substr( $$bufref, $offset, $len, substr( $self->{buffer}, 0, $len, '' ) );
@@ -275,18 +293,16 @@ sub WRITE {
     print $fh substr( $_[1], 0, $_[2] );
 }
 
+sub TELL { croak "tell() not implemented for File::Stream objects." }
+sub SEEK { croak "seek() not implemented for File::Stream objects." }
 
-sub TELL   { croak "tell() not implemented for File::Stream objects." }
-sub SEEK   { croak "seek() not implemented for File::Stream objects." }
-
-sub EOF { not length( $_[0]->{buffer} ) and eof( *{$_[0]->{fh}} ) }
-sub FILENO { fileno( *{ $_[0]->{fh} } ) }
+sub EOF { not length( $_[0]->{buffer} ) and eof( *{ $_[0]->{fh} } ) }
+sub FILENO  { fileno( *{ $_[0]->{fh} } ) }
 sub BINMODE { binmode( *{ $_[0]->{fh} }, @_ ) }
 
 sub CLOSE   { close( *{ $_[0]->{fh} } ) }
 sub UNTIE   { close( *{ $_[0]->{fh} } ) }
 sub DESTROY { close( *{ $_[0]->{fh} } ) }
-
 
 1;
 __END__
@@ -299,19 +315,31 @@ when $/ is used on filehandles that are not File::Stream object.
 Please consider setting the "separator" attribute of the File::Stream object
 instead for a more robust solution.
 
+In a later version of this module, either $/ may be tied to do magic that
+only applies the regex to File::Stream objects, or CORE::readline() might
+be overridden to use the builtin readline() whenever the handle at hand
+is not a File::Stream. It is currently unclear which would be less bad.
+
 Most importantly, however, there are some inherent problems with regular
 expressions applied to (possibly infinite) streams. The implementation of
 Perl's regular expression engine requires that the string you apply a regular
 expression to be in memory completely. That means applying a regular
 expression that matches infinitely long strings (like .*) to a stream will
 lead to the module reading in the whole file, or worse yet, an infinite
-string. B<So don't do that!>
+string. Anchors like I<^> or I<$> don't make sense with streams either.
+B<So don't do that!>
+
+Since version 1.10, the buffer is extended whenever the regex reaches its end.
+That means it has to tokenize the regex and insert weird constructs in many
+places. This is a rather slow and fragile process.
 
 =head1 AUTHOR
 
 Steffen Mueller, E<lt>stream-module at steffen-mueller dot netE<gt>
 
-Many thanks to Simon Cozens for his advice and the original idea.
+Many thanks to Simon Cozens for his advice and the original idea,
+Autrijus Tang for much help with the fiendish regexes I couldn't handle,
+and Ben Tilly for suggesting the use of the ${} regex construct.
 
 =head1 SEE ALSO
 

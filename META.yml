@@ -8,4 +8,5 @@ requires:
   Test::More: 0.44
   Carp: 0
   FileHandle: 0
+  YAPE::Regex: 3.01
 dynamic_config: 0

@@ -1,4 +1,4 @@
-File::Stream version 1.00
+File::Stream version 1.10
 =========================
 
 Perl filehandles are streams, but sometimes they just aren't powerful enough.
@@ -30,6 +30,9 @@ CONTRIBUTIONS
 
 Many thanks go to Simon Cozens for the original idea and much valuable
 input. It was great fun talking about some of the weirder features of Perl.
+Equally many thanks to Autrijus Tang for much help with the fiendish regexes
+I couldn't handle and Ben Tilly for suggesting the use of the ${} regex
+construct.
 
 COPYRIGHT AND LICENCE
 

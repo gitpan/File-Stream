@@ -5,6 +5,8 @@ WriteMakefile(
     'NAME'		=> 'File::Stream',
     'VERSION_FROM'	=> 'lib/File/Stream.pm', # finds $VERSION
     'PREREQ_PM'		=> {
+	    Test::More => 0.44,
+	    YAPE::Regex => 3.01,
 	    Carp => 0,
 	    FileHandle => 0,
     }, # e.g., Module::Name => 1.1
