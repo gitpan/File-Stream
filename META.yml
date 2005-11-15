@@ -1,12 +1,20 @@
---- #YAML:1.0
-name: File::Stream
-version: 1.11
+---
+name: File-Stream
+version: 2.00
+author:
+  - Steffen Mueller <stream-module at steffen-mueller dot net>
 abstract: Regular expression delimited records from streams
 license: perl
-distribution_type: module
 requires:
-  Test::More: 0.44
   Carp: 0
-  FileHandle: 0
-  YAPE::Regex: 3.01
-dynamic_config: 0
+  YAPE::Regex: 3.02
+recommends:
+  Test::Pod: 1.0
+  Test::Pod::Coverage: 1.0
+build_requires:
+  Test::More: 0
+provides:
+  File::Stream:
+    file: lib/File/Stream.pm
+    version: 2.00
+generated_by: Module::Build version 0.2611

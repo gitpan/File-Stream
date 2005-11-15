@@ -1,4 +1,4 @@
-File::Stream version 1.11
+File::Stream version 2.00
 =========================
 
 Perl filehandles are streams, but sometimes they just aren't powerful enough.
@@ -14,6 +14,20 @@ INSTALLATION
 
 To install this module type the following:
 
+   perl Build.PL
+   ./Build
+   ./Build test
+   ./Build install
+
+On platforms that don't support the "./" notation, that would be:
+
+   perl Build.PL
+   perl Build
+   perl Build test
+   perl Build install
+
+If you wish, you may use the old MakeMaker style instead:
+
    perl Makefile.PL
    make
    make test
@@ -24,7 +38,7 @@ DEPENDENCIES
 This module requires these other modules and libraries:
 
   Carp
-  FileHandle
+  Test::More
   YAPE::Regex
 
 CONTRIBUTIONS
@@ -35,9 +49,12 @@ Equally many thanks to Autrijus Tang for much help with the fiendish regexes
 I couldn't handle and Ben Tilly for suggesting the use of the ${} regex
 construct.
 
+Also, I owe thanks to Jeff 'japhy' Pinyan for writing the YAPE::Regex
+module which made my life much easier.
+
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2003-2004 Steffen M¸ller
+Copyright (C) 2003-2005 Steffen MÅller
 Author can be reached at stream-module at steffen-mueller dot net.
 
 This library is free software; you can redistribute it and/or modify
