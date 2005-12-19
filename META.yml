@@ -1,6 +1,6 @@
 ---
 name: File-Stream
-version: 2.00
+version: 2.10
 author:
   - Steffen Mueller <stream-module at steffen-mueller dot net>
 abstract: Regular expression delimited records from streams
@@ -16,5 +16,5 @@ build_requires:
 provides:
   File::Stream:
     file: lib/File/Stream.pm
-    version: 2.00
+    version: 2.10
 generated_by: Module::Build version 0.2611

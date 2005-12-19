@@ -31,6 +31,12 @@ File::Stream - Regular expression delimited records from streams
   # $pre_match contains all that was before the first token that was found.
   # both the contents of $match and $pre_match have been removed from the
   # data stream (buffer).
+  
+  # Since version 2.10 of the module, you can use seek() and tell() on
+  # File::Stream objects:
+  my $position = tell($stream);
+  # ...
+  seek($stream, 0, $position); # rewind
 
 =head1 DESCRIPTION
 
@@ -62,7 +68,7 @@ use Carp;
 use YAPE::Regex;
 
 use vars qw/$End_Of_String/;
-our $VERSION = '2.00';
+our $VERSION = '2.10';
 
 =head2 new
 
@@ -299,9 +305,18 @@ sub WRITE {
     print $fh substr( $_[1], 0, $_[2] );
 }
 
-sub TELL { croak "tell() not implemented for File::Stream objects." }
-sub SEEK { croak "seek() not implemented for File::Stream objects." }
+sub TELL {
+    my $self = $_[0];
+    my $foffset = tell $self->{fh};
+    return $foffset - length($self->{buffer});
+}
 
+sub SEEK {
+    my $self = $_[0];
+    seek $self->{fh}, $_[1], $_[2];
+    $self->{buffer} = '';
+    return 1;
+}
 sub EOF { not length( $_[0]->{buffer} ) and eof( *{ $_[0]->{fh} } ) }
 sub FILENO  { fileno( *{ $_[0]->{fh} } ) }
 sub BINMODE { binmode( *{ $_[0]->{fh} }, @_ ) }
@@ -349,6 +364,10 @@ Steffen Mueller, E<lt>stream-module at steffen-mueller dot netE<gt>
 Many thanks to Simon Cozens for his advice and the original idea,
 Autrijus Tang for much help with the fiendish regexes I couldn't handle,
 and Ben Tilly for suggesting the use of the ${} regex construct.
+
+Furthermore, since version 2.10, File::Stream includes a patch implementing
+C<seek()> and C<tell()> for File::Stream objects. The idea and code were
+kindly supplied by Phil Whineray.
 
 =head1 SEE ALSO
 

@@ -1,4 +1,4 @@
-File::Stream version 2.00
+File::Stream version 2.10
 =========================
 
 Perl filehandles are streams, but sometimes they just aren't powerful enough.
