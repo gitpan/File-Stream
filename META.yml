@@ -1,20 +1,15 @@
----
-name: File-Stream
-version: 2.10
-author:
-  - Steffen Mueller <stream-module at steffen-mueller dot net>
-abstract: Regular expression delimited records from streams
-license: perl
-requires:
-  Carp: 0
-  YAPE::Regex: 3.02
-recommends:
-  Test::Pod: 1.0
-  Test::Pod::Coverage: 1.0
-build_requires:
-  Test::More: 0
-provides:
-  File::Stream:
-    file: lib/File/Stream.pm
-    version: 2.10
-generated_by: Module::Build version 0.2611
+--- #YAML:1.0
+name:                File-Stream
+version:             2.20
+abstract:            ~
+license:             ~
+author:              ~
+generated_by:        ExtUtils::MakeMaker version 6.44
+distribution_type:   module
+requires:     
+    Carp:                          0
+    Test::More:                    0
+    YAPE::Regex:                   3.02
+meta-spec:
+    url:     http://module-build.sourceforge.net/META-spec-v1.3.html
+    version: 1.3
