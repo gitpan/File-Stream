@@ -68,7 +68,7 @@ use Carp;
 use YAPE::Regex;
 
 use vars qw/$End_Of_String/;
-our $VERSION = '2.20';
+our $VERSION = '2.30';
 
 =head2 new
 
@@ -171,31 +171,31 @@ sub find {
     $End_Of_String = 0;
     my @regex_tokens =
       map {
-	my $yp = YAPE::Regex->new($_);
-	my $str = '';
-	my $token;
-	while ($token = $yp->next()) {
-		my $tstr = $token->string();
-		if ($self->{die_on_anchors} and ($tstr eq '^' or $tstr eq '$')) {
-			croak "Invalid use of anchors (here: '$tstr') in a ",
-				"regular expression that will be applied to a stream";
-		}
-		$str .= $tstr .
-		        '(?:\z(?{$End_Of_String++})(?!)|)';
-	}
-	qr/$str/;
+        my $yp = YAPE::Regex->new($_);
+        my $str = '';
+        my $token;
+        while ($token = $yp->next()) {
+            my $tstr = $token->string();
+            if ($self->{die_on_anchors} and $tstr eq '^' or $tstr eq '$') {
+                croak "Invalid use of anchors (here: '$tstr') in a ",
+                      "regular expression that will be\n",
+                      "applied to a stream";
+            }
+            $str .= $tstr .
+            '(?:\z(?{$End_Of_String++})(?!)|)';
+        }
+        qr/$str/;
       }
       map {
-        if ( not ref($_) )
-        {
-            qr/\Q$_\E/;
+        if ( not ref($_) ) {
+            qr/\Q$_\E/
         }
         elsif ( ref($_) eq 'Regexp' ) {
-            $_;
+            $_
         }
         else {
             my $string = "$_";
-            qr/\Q$string\E/;
+            qr/\Q$string\E/
         }
       } @terms;
     
@@ -204,11 +204,11 @@ sub find {
 
     while (1) {
         my @matches = $self->{buffer} =~ $compiled;
-	if ($End_Of_String or not @matches) {
-		$End_Of_String = 0;
-		return undef unless $self->fill_buffer();
-		next;
-	}
+        if ($End_Of_String or not @matches) {
+            $End_Of_String = 0;
+            return undef unless $self->fill_buffer();
+            next;
+        }
         else {
             my $index = undef;
             for ( 0 .. $#matches ) {
@@ -291,14 +291,13 @@ sub READ {
     if ( length $self->{buffer} < $len ) {
         my $bytes = 0;
         while ( $bytes = $self->fill_buffer()
-            and length( $self->{buffer} ) < $len )
-        {
-        }
+                and length( $self->{buffer} ) < $len )
+        { }
 
         if ( not $bytes ) {
             my $length_avail = length( $self->{buffer} );
             substr( $$bufref, $offset, $length_avail,
-                substr( $self->{buffer}, 0, $length_avail, '' ) );
+                    substr( $self->{buffer}, 0, $length_avail, '' ) );
             return $length_avail;
         }
 
@@ -326,7 +325,8 @@ sub SEEK {
     $self->{buffer} = '';
     return 1;
 }
-sub EOF { not length( $_[0]->{buffer} ) and eof( *{ $_[0]->{fh} } ) }
+
+sub EOF     { not length( $_[0]->{buffer} ) and eof( *{ $_[0]->{fh} } ) }
 sub FILENO  { fileno( *{ $_[0]->{fh} } ) }
 sub BINMODE { binmode( *{ $_[0]->{fh} }, @_ ) }
 
@@ -377,6 +377,14 @@ and Ben Tilly for suggesting the use of the ${} regex construct.
 Furthermore, since version 2.10, File::Stream includes a patch implementing
 C<seek()> and C<tell()> for File::Stream objects. The idea and code were
 kindly supplied by Phil Whineray.
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (C) 2003-2011 by Steffen Mueller
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself, either Perl version 5.6 or,
+at your option, any later version of Perl 5 you may have available.
 
 =head1 SEE ALSO
 
